@@ -1,0 +1,24 @@
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background pattern -->
+  <defs>
+    <pattern id="fashionPattern" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+      <!-- Clothing hanger -->
+      <path d="M40,10 L60,30 L50,30 L50,40 L30,40 L30,30 L20,30 Z" fill="none" stroke="#8884d8" stroke-width="1" opacity="0.1"/>
+      
+      <!-- Dress silhouette -->
+      <path d="M20,70 Q30,50 40,70 Q50,50 60,70 L55,75 L25,75 Z" fill="none" stroke="#ff7eb9" stroke-width="1" opacity="0.1"/>
+      
+      <!-- T-shirt silhouette -->
+      <path d="M15,20 L30,10 L50,10 L65,20 L60,30 L55,20 L45,25 L35,25 L25,20 L20,30 Z" fill="none" stroke="#7eb0ff" stroke-width="1" opacity="0.1"/>
+      
+      <!-- Shoe silhouette -->
+      <path d="M65,60 Q75,55 75,65 L60,65 Q60,55 65,60 Z" fill="none" stroke="#7effbf" stroke-width="1" opacity="0.1"/>
+      
+      <!-- Bag silhouette -->
+      <path d="M5,50 L15,50 L15,65 Q10,70 5,65 Z" fill="none" stroke="#feff7e" stroke-width="1" opacity="0.1"/>
+    </pattern>
+  </defs>
+  
+  <!-- Apply the pattern -->
+  <rect width="400" height="400" fill="url(#fashionPattern)"/>
+</svg>

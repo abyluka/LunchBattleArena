@@ -24,8 +24,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <Link href={`/product/${product.id}`}>
-        <a className="block relative">
+      <Link href={`/product/${product.id}`} className="block relative">
           <img 
             src={product.images[0]} 
             alt={product.name} 
@@ -52,7 +51,6 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
               </svg>
             </button>
           </div>
-        </a>
       </Link>
       <div className="p-4">
         <div className="flex justify-between items-start mb-1">

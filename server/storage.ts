@@ -7,12 +7,21 @@ import {
   ProductFilters
 } from "@shared/schema";
 
+import { 
+  User, InsertUser,
+  Wishlist, InsertWishlist,
+  WishlistItem, InsertWishlistItem,
+  PriceAlert, InsertPriceAlert,
+  ApiSyncLog
+} from "@shared/schema";
+
 export interface IStorage {
   // Brands
   getBrands(): Promise<Brand[]>;
   getBrandById(id: number): Promise<Brand | undefined>;
   getBrandByName(name: string): Promise<Brand | undefined>;
   createBrand(brand: InsertBrand): Promise<Brand>;
+  updateBrand(id: number, brand: Partial<InsertBrand>): Promise<Brand>;
 
   // Categories
   getCategories(): Promise<Category[]>;
@@ -34,9 +43,39 @@ export interface IStorage {
   getProducts(filters?: ProductFilters): Promise<{ products: Product[], total: number }>;
   getProductById(id: number): Promise<Product | undefined>;
   createProduct(product: InsertProduct): Promise<Product>;
+  updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product>;
   
   // Location-specific methods
   getUKProducts(filters?: ProductFilters): Promise<{ products: Product[], total: number }>;
+  
+  // User management
+  getUser(id: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+  updateUser(id: string, userData: Partial<InsertUser>): Promise<User>;
+  
+  // Wishlist management
+  getWishlists(userId: string): Promise<Wishlist[]>;
+  getWishlistById(id: number): Promise<Wishlist | undefined>;
+  createWishlist(wishlist: InsertWishlist): Promise<Wishlist>;
+  updateWishlist(id: number, wishlist: Partial<InsertWishlist>): Promise<Wishlist>;
+  deleteWishlist(id: number): Promise<void>;
+  
+  // Wishlist items
+  getWishlistItems(wishlistId: number): Promise<WishlistItem[]>;
+  addToWishlist(item: InsertWishlistItem): Promise<WishlistItem>;
+  removeFromWishlist(wishlistId: number, productId: number): Promise<void>;
+  
+  // Price alerts
+  getPriceAlerts(userId: string): Promise<PriceAlert[]>;
+  getPriceAlertById(id: number): Promise<PriceAlert | undefined>;
+  createPriceAlert(alert: InsertPriceAlert): Promise<PriceAlert>;
+  updatePriceAlert(id: number, alert: Partial<InsertPriceAlert>): Promise<PriceAlert>;
+  deletePriceAlert(id: number): Promise<void>;
+  
+  // API integration
+  logApiSync(brandId: number): Promise<ApiSyncLog>;
+  updateApiSyncLog(id: number, log: Partial<ApiSyncLog>): Promise<ApiSyncLog>;
+  getLatestApiSyncLog(brandId: number): Promise<ApiSyncLog | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -468,4 +507,10 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Import the Database Storage implementation
+import { DatabaseStorage } from "./database-storage";
+
+// Create an instance of the appropriate storage implementation
+export const storage = process.env.NODE_ENV === "production" 
+  ? new DatabaseStorage()  // Use DatabaseStorage in production
+  : new MemStorage();      // Use MemStorage in development for now

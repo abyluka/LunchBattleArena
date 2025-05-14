@@ -34,6 +34,9 @@ export interface IStorage {
   getProducts(filters?: ProductFilters): Promise<{ products: Product[], total: number }>;
   getProductById(id: number): Promise<Product | undefined>;
   createProduct(product: InsertProduct): Promise<Product>;
+  
+  // Location-specific methods
+  getUKProducts(filters?: ProductFilters): Promise<{ products: Product[], total: number }>;
 }
 
 export class MemStorage implements IStorage {
@@ -437,6 +440,31 @@ export class MemStorage implements IStorage {
     const newProduct: Product = { ...product, id };
     this.products.set(id, newProduct);
     return newProduct;
+  }
+  
+  async getUKProducts(filters?: ProductFilters): Promise<{ products: Product[], total: number }> {
+    // UK-based brands IDs - Primark, River Island, John Lewis, Next, Matalan, New Look
+    const ukBrandIds = [2, 3, 6, 5, 9, 10]; 
+    
+    // Create a copy of the filters or initialize a new one
+    const ukFilters: ProductFilters = filters ? { ...filters } : {};
+    
+    // Set or merge the UK brand IDs with any existing brand filter
+    if (ukFilters.brandIds && ukFilters.brandIds.length > 0) {
+      // If specific brands are requested, only include UK brands from that selection
+      ukFilters.brandIds = ukFilters.brandIds.filter(id => ukBrandIds.includes(id));
+      
+      // If no UK brands are in the requested brands, use all UK brands
+      if (ukFilters.brandIds.length === 0) {
+        ukFilters.brandIds = [...ukBrandIds];
+      }
+    } else {
+      // Use all UK brands if no specific brands are requested
+      ukFilters.brandIds = [...ukBrandIds];
+    }
+    
+    // Use the regular getProducts method with the UK filters
+    return this.getProducts(ukFilters);
   }
 }
 

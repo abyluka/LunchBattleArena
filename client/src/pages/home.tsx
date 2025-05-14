@@ -12,9 +12,11 @@ import ProductDetailDialog from "@/components/product/product-detail-dialog";
 interface HomeProps {
   filters: Filter;
   updateFilters: (filters: Partial<Filter>) => void;
+  country?: string | null;
+  isUK?: boolean;
 }
 
-export default function Home({ filters, updateFilters }: HomeProps) {
+export default function Home({ filters, updateFilters, country, isUK }: HomeProps) {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);

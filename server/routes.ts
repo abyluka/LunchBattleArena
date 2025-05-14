@@ -59,6 +59,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         search: z.string().optional(),
         page: z.string().optional(),
         limit: z.string().optional(),
+        country: z.string().optional(),
       });
 
       const query = querySchema.parse(req.query);
@@ -101,7 +102,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         filters.limit = Number(query.limit);
       }
       
-      const { products, total } = await storage.getProducts(filters);
+      // Get country-specific products if country is provided
+      let products, total;
+      if (query.country === 'GB' || query.country === 'UK') {
+        // Get UK-specific products
+        ({ products, total } = await storage.getUKProducts(filters));
+      } else {
+        // Get all products
+        ({ products, total } = await storage.getProducts(filters));
+      }
       
       // Enhance products with related data
       const enhancedProducts = await Promise.all(

@@ -55,6 +55,11 @@ export default function Home({ filters, updateFilters, country, isUK }: HomeProp
       queryParams.push(`search=${encodeURIComponent(filters.search)}`);
     }
     
+    // Add country filter for UK users
+    if (isUK) {
+      queryParams.push(`country=UK`);
+    }
+    
     queryParams.push(`page=${currentPage}`);
     queryParams.push(`limit=${limit}`);
     
@@ -63,7 +68,7 @@ export default function Home({ filters, updateFilters, country, isUK }: HomeProp
 
   // Fetch products with filters
   const { data: productsData, isLoading } = useQuery({
-    queryKey: ['/api/products', filters, currentPage],
+    queryKey: ['/api/products', filters, currentPage, isUK],
     queryFn: async () => {
       const queryString = buildQueryString();
       const response = await fetch(`/api/products?${queryString}`);

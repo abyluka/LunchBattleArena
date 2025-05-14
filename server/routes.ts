@@ -2,9 +2,18 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
+import { schedulePriceAlertChecks } from "./services/price-alerts";
+
+// Import route modules
+import brandApiRoutes from "./routes/brand-api";
+import wishlistRoutes from "./routes/wishlist";
+import priceAlertRoutes from "./routes/price-alerts";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // PREFIX all routes with /api
+  // Register modular routes
+  app.use(brandApiRoutes);
+  app.use(wishlistRoutes);
+  app.use(priceAlertRoutes);
   
   // Get all brands
   app.get("/api/brands", async (req, res) => {
@@ -199,6 +208,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get or create a user for demo purposes
+  app.get("/api/user", async (req, res) => {
+    try {
+      // In a real app, this would be tied to authentication
+      // For demo purposes, we'll use a fixed demo user ID
+      const demoUserId = 'demo-user';
+      
+      // Check if user exists
+      let user = await storage.getUser(demoUserId);
+      
+      if (!user) {
+        // Create the user if it doesn't exist
+        user = await storage.createUser({
+          id: demoUserId,
+          email: 'demo@example.com',
+          firstName: 'Demo',
+          lastName: 'User',
+          profileImageUrl: null,
+          preferences: {}
+        });
+      }
+      
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching or creating user:", error);
+      res.status(500).json({ message: "Error with user" });
+    }
+  });
+
+  // Create HTTP server
   const httpServer = createServer(app);
+  
+  // Schedule price alert checks (check every 15 minutes in development)
+  if (process.env.NODE_ENV !== 'test') {
+    schedulePriceAlertChecks(15);
+  }
+  
   return httpServer;
 }
